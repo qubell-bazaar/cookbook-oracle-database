@@ -1,2 +1,2 @@
-# cookbook-oracle-database
+# oracle-database
 Oracle DB 11R2
