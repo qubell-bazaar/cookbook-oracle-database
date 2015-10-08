@@ -121,7 +121,7 @@ bash "install Oracle 11R2" do
   cwd ::File.join(node[:oracle][:ee][:install_dir], "database")
   creates node[:oracle][:ee][:home_dir]
   code <<-END
-    runuser -l oracle -c "#{::File.join(node[:oracle][:ee][:install_dir], "database", "runInstaller")}\
+    su -l oracle -c "#{::File.join(node[:oracle][:ee][:install_dir], "database", "runInstaller")}\
     -showProgress \
     -waitforcompletion \
     -silent \
@@ -172,7 +172,7 @@ if !String(node[:oracle][:ee][:install][:opatch]).empty?
     creates ::File.join(node[:oracle][:ee][:install_dir], ::File.basename(node[:oracle][:ee][:install][:opatch])+".processed")
     code <<-END
       rm -rf #{::File.join(node[:oracle][:ee][:home_dir], "OPatch", "*")} && \
-      runuser -l oracle -c 'cd #{node[:oracle][:ee][:home_dir]}; unzip -o #{::File.join(node[:oracle][:ee][:install_dir], ::File.basename(node[:oracle][:ee][:install][:opatch]))}' && \
+      su -l oracle -c 'cd #{node[:oracle][:ee][:home_dir]}; unzip -o #{::File.join(node[:oracle][:ee][:install_dir], ::File.basename(node[:oracle][:ee][:install][:opatch]))}' && \
       touch #{::File.join(node[:oracle][:ee][:install_dir], ::File.basename(node[:oracle][:ee][:install][:opatch])+".processed")}
     END
     only_if { File.exists?(::File.join(node[:oracle][:ee][:install_dir], ::File.basename(node[:oracle][:ee][:install][:opatch]))) }
@@ -208,7 +208,7 @@ Array(node[:oracle][:ee][:install][:patches]).each do |patch|
     cwd ::File.join(node[:oracle][:ee][:install_dir], "patch."+patch_num)
     creates ::File.join(node[:oracle][:ee][:install_dir], "patch.#{patch_num}.processed")
     code <<-END
-      runuser -l oracle -c '$ORACLE_HOME/OPatch/opatch apply -silent -ocmrf #{::File.join(node[:oracle][:ee][:install_dir], "ocm.rsp")} #{::File.join(node[:oracle][:ee][:install_dir], "patch."+patch_num, patch_num)}' && \
+      su -l oracle -c '$ORACLE_HOME/OPatch/opatch apply -silent -ocmrf #{::File.join(node[:oracle][:ee][:install_dir], "ocm.rsp")} #{::File.join(node[:oracle][:ee][:install_dir], "patch."+patch_num, patch_num)}' && \
       touch #{::File.join(node[:oracle][:ee][:install_dir], "patch.#{patch_num}.processed")}
     END
     only_if { File.exists?(::File.join(node[:oracle][:ee][:install_dir], "patch."+patch_num)) }
@@ -226,9 +226,9 @@ template ::File.join(node[:oracle][:ee][:home_dir], "network", "admin", "listene
 end
 
 bash "start listener" do
-  not_if "runuser -l oracle -c 'lsnrctl status'"
+  not_if "su -l oracle -c 'lsnrctl status'"
   code <<-END
-    runuser -l oracle -c "lsnrctl start"
+    su -l oracle -c "lsnrctl start"
   END
   action :run
 end

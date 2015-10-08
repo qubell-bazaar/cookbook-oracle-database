@@ -15,7 +15,7 @@ end
 
 bash "run impdp #{dp_filename.gsub(/\.gz$/, "")}" do
   code <<-END
-    runuser -l oracle -c "\
+    su -l oracle -c "\
       ORACLE_SID=#{node[:oracle][:db][:sid]} \
       impdp system/#{node[:oracle][:db][:system_password]} \
       dumpfile=#{dp_filename.gsub(/\.gz$/, "")} #{String(node[:oracle][:dp][:params])} \

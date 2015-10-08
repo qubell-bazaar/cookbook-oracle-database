@@ -18,9 +18,9 @@ end
 
 # dbca -silent -responseFile /opt/database/dbca.rsp
 bash "create database #{node[:oracle][:db][:sid]}" do
-  not_if "runuser -l oracle -c 'test -e $ORACLE_HOME/dbs/spfile#{node[:oracle][:db][:sid]}.ora'"
+  not_if "su -l oracle -c 'test -e $ORACLE_HOME/dbs/spfile#{node[:oracle][:db][:sid]}.ora'"
   code <<-END
-    runuser -l oracle -c "dbca -silent -responseFile /tmp/dbca.rsp"
+    su -l oracle -c "dbca -silent -responseFile /tmp/dbca.rsp"
   END
   action :run
 end

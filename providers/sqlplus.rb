@@ -21,7 +21,7 @@ action :run do
   end
   bash "run sqlplus[#{new_resource.name}]" do
     code <<-END
-      runuser -l oracle -c "\
+      su -l oracle -c "\
       sqlplus #{new_resource.user}/#{new_resource.password}@#{new_resource.sid} #{opts} @#{tmp_path} \
       &> /tmp/sqlplus.log"
     END
